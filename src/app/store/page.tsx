@@ -1,4 +1,4 @@
-import Component from "./zmb-sosa-page"
+import Component from "../digital-package"
 
 export default function Page() {
   return <Component />

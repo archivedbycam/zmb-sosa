@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import NavHeader from "@/components/nav-header"
+import NewsletterFooter from "@/components/newsletter-footer"
 
 export default function Component() {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -36,12 +37,12 @@ export default function Component() {
   }
 
   return (
-    <div className="min-h-screen bg-[#ffffff]">
+    <div className="min-h-screen bg-[#ffffff] flex flex-col">
       {/* Navigation */}
       <NavHeader />
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-8 py-16">
+      <div className="max-w-6xl mx-auto px-8 py-16 flex-1">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-[#000000] text-4xl font-bold mb-4">Complete Digital Package</h1>
@@ -93,6 +94,9 @@ export default function Component() {
           </Button>
         </div>
       </div>
+
+      {/* Footer */}
+      <NewsletterFooter />
     </div>
   )
 }

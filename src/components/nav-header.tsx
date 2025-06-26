@@ -13,8 +13,8 @@ export default function NavHeader() {
       </Link>
       <div className="w-full max-w-2xl flex items-center justify-between ml-auto mr-auto">
         <Link 
-          href="/zmb-sosa-page" 
-          className={`text-black hover:text-black transition-colors ${pathname === "/zmb-sosa-page" ? "font-bold" : ""}`}
+          href="/projects" 
+          className={`text-black hover:text-black transition-colors ${pathname === "/projects" ? "font-bold" : ""}`}
         >
           Projects
         </Link>

@@ -1,17 +1,15 @@
 import { Button } from "@/components/ui/button"
 import NavHeader from "@/components/nav-header"
+import NewsletterFooter from "@/components/newsletter-footer"
 
-export default function Component() {
+export default function ZmbSosaPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Navigation */}
       <NavHeader />
 
       {/* Main Content */}
-      <div className="flex flex-col items-center justify-center px-8 py-16">
-        {/* Title */}
-        <h1 className="text-xl font-medium text-black mb-16 tracking-wide">ZMB SOSA - STARTED ROUGH</h1>
-
+      <div className="flex flex-col items-center justify-center px-8 py-4 flex-1">
         {/* Embedded Video Player */}
         <div className="mb-12 w-full max-w-2xl">
           <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
@@ -26,11 +24,19 @@ export default function Component() {
           </div>
         </div>
 
-        {/* Download Button */}
+        {/* Title Text */}
+        <p className="text-[#000000] text-4xl font-bold mb-8 text-center">
+          
+        </p>
+
+        {/* Button */}
         <Button className="bg-black text-white hover:bg-black px-8 py-3 rounded-md font-medium transition-colors">
-          Download / Stream
+          Stream Now
         </Button>
       </div>
+
+      {/* Footer */}
+      <NewsletterFooter />
     </div>
   )
-}
+} 

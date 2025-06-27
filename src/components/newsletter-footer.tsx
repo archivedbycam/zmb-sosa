@@ -1,21 +1,79 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Instagram, Youtube } from "lucide-react"
+import { useState } from "react"
 
 export default function Component() {
+  const [email, setEmail] = useState("")
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [message, setMessage] = useState("")
+
+  const handleSubscribe = async () => {
+    if (!email || !email.includes('@')) {
+      setStatus("error")
+      setMessage("Please enter a valid email address")
+      return
+    }
+
+    setStatus("loading")
+    
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setStatus("success")
+        setMessage(data.message)
+        setEmail("")
+      } else {
+        setStatus("error")
+        setMessage(data.error)
+      }
+    } catch (error) {
+      setStatus("error")
+      setMessage("Something went wrong. Please try again.")
+    }
+  }
+
   return (
     <footer className="border-[#d0d5dd] p-6 px-96 border-t-0 bg-[#ffffff]">
       <div className="w-full space-y-6 px-56">
         {/* Newsletter Signup */}
-        <div className="flex gap-3 justify-center max-w-md mx-auto">
-          <Input
-            type="email"
-            placeholder="Enter your email"
-            className="flex-1 border-[#d0d5dd] text-[#667085] placeholder:text-[#98a2b3] rounded-lg px-4 py-3 bg-white"
-          />
-          <Button className="bg-[#000000] hover:bg-[#101828] text-[#ffffff] rounded-lg px-6 py-3 font-medium">
-            Subscribe
-          </Button>
+        <div className="flex flex-col gap-3 justify-center max-w-md mx-auto">
+          <div className="flex gap-3">
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="flex-1 border-[#d0d5dd] text-[#667085] placeholder:text-[#98a2b3] rounded-lg px-4 py-3 bg-white"
+              disabled={status === "loading"}
+            />
+            <Button 
+              onClick={handleSubscribe}
+              disabled={status === "loading"}
+              className="bg-[#000000] hover:bg-[#101828] text-[#ffffff] rounded-lg px-6 py-3 font-medium disabled:opacity-50"
+            >
+              {status === "loading" ? "Subscribing..." : "Subscribe"}
+            </Button>
+          </div>
+          
+          {message && (
+            <p className={`text-sm text-center ${
+              status === "success" ? "text-green-600" : "text-red-600"
+            }`}>
+              {message}
+            </p>
+          )}
         </div>
 
         {/* Social Media Icons */}

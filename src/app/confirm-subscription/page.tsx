@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { toast } from 'sonner'
 
 export default function ConfirmSubscription() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
@@ -14,6 +15,7 @@ export default function ConfirmSubscription() {
     if (!token) {
       setStatus('error')
       setMessage('Invalid confirmation link')
+      toast.error('Invalid confirmation link')
       return
     }
 
@@ -35,13 +37,16 @@ export default function ConfirmSubscription() {
       if (response.ok) {
         setStatus('success')
         setMessage(data.message)
+        toast.success(data.message)
       } else {
         setStatus('error')
         setMessage(data.error)
+        toast.error(data.error)
       }
     } catch (error) {
       setStatus('error')
       setMessage('Something went wrong. Please try again.')
+      toast.error('Something went wrong. Please try again.')
     }
   }
 

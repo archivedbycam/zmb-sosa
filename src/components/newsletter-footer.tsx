@@ -4,16 +4,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Instagram, Youtube } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export default function Component() {
   const [email, setEmail] = useState("")
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
-  const [message, setMessage] = useState("")
 
   const handleSubscribe = async () => {
     if (!email || !email.includes('@')) {
-      setStatus("error")
-      setMessage("Please enter a valid email address")
+      toast.error("Please enter a valid email address")
       return
     }
 
@@ -32,15 +31,15 @@ export default function Component() {
 
       if (response.ok) {
         setStatus("success")
-        setMessage(data.message)
+        toast.success(data.message)
         setEmail("")
       } else {
         setStatus("error")
-        setMessage(data.error)
+        toast.error(data.error)
       }
     } catch (error) {
       setStatus("error")
-      setMessage("Something went wrong. Please try again.")
+      toast.error("Something went wrong. Please try again.")
     }
   }
 
@@ -66,14 +65,6 @@ export default function Component() {
               {status === "loading" ? "Subscribing..." : "Subscribe"}
             </Button>
           </div>
-          
-          {message && (
-            <p className={`text-sm text-center ${
-              status === "success" ? "text-green-600" : "text-red-600"
-            }`}>
-              {message}
-            </p>
-          )}
         </div>
 
         {/* Social Media Icons */}

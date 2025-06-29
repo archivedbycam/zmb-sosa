@@ -43,6 +43,31 @@ export async function sendConfirmationEmail(email: string, token: string) {
   }
 }
 
+export async function sendContactEmail({ name, email, message, subscribe }: { name: string, email: string, message: string, subscribe: boolean }) {
+  try {
+    console.log('Sending contact email with Resend:', { name, email, message, subscribe });
+    const result = await resend.emails.send({
+      from: email,
+      to: 'contact@zmbsosa.com',
+      subject: name,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #333; text-align: center;">New Contact Form Submission</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Subscribe to mailing list:</strong> ${subscribe ? "Yes" : "No"}</p>
+          <p><strong>Message:</strong></p>
+          <p style="white-space: pre-line;">${message}</p>
+        </div>
+      `
+    });
+    console.log('Resend response:', result);
+  } catch (error) {
+    console.error('Contact email sending error:', error)
+    throw error
+  }
+}
+
 /*
 export async function addToEmailMarketingService(email: string) {
   // Integration with your preferred email marketing service

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -16,6 +16,8 @@ export default function ContactPage() {
     email: "",
     message: ""
   })
+  const [showSubscribe, setShowSubscribe] = useState(true)
+  const [checkingSubscription, setCheckingSubscription] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -24,6 +26,34 @@ export default function ContactPage() {
       [name]: value
     }))
   }
+
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (!formData.email || !formData.email.includes('@')) {
+        setShowSubscribe(true)
+        return
+      }
+      setCheckingSubscription(true)
+      try {
+        const response = await fetch('/api/newsletter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email })
+        })
+        if (response.status === 409) {
+          setShowSubscribe(false)
+          setIsSubscribed(false)
+        } else {
+          setShowSubscribe(true)
+        }
+      } catch {
+        setShowSubscribe(true)
+      } finally {
+        setCheckingSubscription(false)
+      }
+    }
+    checkSubscription()
+  }, [formData.email])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,36 +71,21 @@ export default function ContactPage() {
     setIsSubmitting(true)
 
     try {
-      // Simulate form submission (replace with actual API call)
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      toast.success("Message sent successfully! We'll get back to you soon.")
-      
-      // Reset form
-      setFormData({ name: "", email: "", message: "" })
-      setIsSubscribed(false)
-      
-      // If user checked subscribe, add them to newsletter
-      if (isSubscribed) {
-        try {
-          const response = await fetch('/api/newsletter', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: formData.email }),
-          })
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...formData, subscribe: isSubscribed }),
+      })
+      const data = await response.json()
 
-          const data = await response.json()
-
-          if (response.ok) {
-            toast.success("You've also been subscribed to our newsletter!")
-          } else {
-            toast.error(data.error || "Failed to subscribe to newsletter")
-          }
-        } catch (error) {
-          toast.error("Failed to subscribe to newsletter")
-        }
+      if (response.ok) {
+        toast.success("Message sent successfully! We'll get back to you soon.")
+        setFormData({ name: "", email: "", message: "" })
+        setIsSubscribed(false)
+      } else {
+        toast.error(data.error || "Failed to send message. Please try again.")
       }
     } catch (error) {
       toast.error("Failed to send message. Please try again.")
@@ -123,15 +138,21 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-center space-x-2 pt-2">
-                <Checkbox
-                  id="subscribe"
-                  checked={isSubscribed}
-                  onCheckedChange={(checked) => setIsSubscribed(checked as boolean)}
-                  className="border-gray-300"
-                />
-                <Label htmlFor="subscribe" className="text-black text-sm font-medium cursor-pointer">
-                  Subscribe to mailing list
-                </Label>
+                {checkingSubscription ? (
+                  <span className="text-sm text-gray-500">Checking subscription status...</span>
+                ) : showSubscribe && (
+                  <>
+                    <Checkbox
+                      id="subscribe"
+                      checked={isSubscribed}
+                      onCheckedChange={(checked) => setIsSubscribed(checked as boolean)}
+                      className="border-gray-300"
+                    />
+                    <Label htmlFor="subscribe" className="text-black text-sm font-medium cursor-pointer">
+                      Subscribe to mailing list
+                    </Label>
+                  </>
+                )}
               </div>
             </div>
 

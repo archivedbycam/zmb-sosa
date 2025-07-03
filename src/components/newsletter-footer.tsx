@@ -94,10 +94,15 @@ export default function Component() {
           </a>
 
           {/* YouTube Icon */}
-          <button className="text-[#000000] hover:text-[#475467] transition-colors">
+          <a 
+            href="https://www.youtube.com/channel/UC57EuHxBmb284F6QBcgF0Aw" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-[#000000] hover:text-[#475467] transition-colors"
+          >
             <Youtube size={24} />
             <span className="sr-only">YouTube</span>
-          </button>
+          </a>
 
           {/* TikTok Icon */}
           <a 

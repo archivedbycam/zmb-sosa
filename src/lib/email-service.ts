@@ -9,7 +9,7 @@ export function generateToken(): string {
 export async function sendConfirmationEmail(email: string, token: string) {
   try {
     // Use environment variable or fallback to localhost
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'
     const confirmationUrl = `${siteUrl}/confirm-subscription?token=${token}`
     
     await resend.emails.send({
@@ -47,7 +47,7 @@ export async function sendContactEmail({ name, email, message, subscribe }: { na
   try {
     console.log('Sending contact email with Resend:', { name, email, message, subscribe });
     const result = await resend.emails.send({
-      from: email,
+      from: 'contact@zmbsosa.com',
       to: 'contact@zmbsosa.com',
       subject: name,
       html: `

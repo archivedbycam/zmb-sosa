@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import NavHeader from "@/components/nav-header"
 import NewsletterFooter from "@/components/newsletter-footer"
+import { toast } from "sonner"
+import { loadStripe } from '@stripe/stripe-js'
 
 export default function Component() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
 
   const slides = [
     {
@@ -34,6 +37,44 @@ export default function Component() {
 
   const getSlideIndex = (offset: number) => {
     return (currentSlide + offset + slides.length) % slides.length
+  }
+
+  const handleBuyNow = async () => {
+    setIsLoading(true)
+    
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          success_url: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}/store`,
+        }),
+      })
+
+      const { sessionId, error } = await response.json()
+
+      if (error) {
+        toast.error('Failed to create checkout session')
+        return
+      }
+
+      // Redirect to Stripe Checkout
+      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+      if (stripe) {
+        const { error } = await stripe.redirectToCheckout({ sessionId })
+        if (error) {
+          toast.error(error.message)
+        }
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
+      toast.error('Something went wrong. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -89,8 +130,12 @@ export default function Component() {
 
         {/* Buy Button */}
         <div className="text-center">
-          <Button className="bg-[#0f172a] hover:bg-[#101828] text-[#ffffff] px-8 py-3 rounded-lg font-medium">
-            Buy Now
+          <Button 
+            onClick={handleBuyNow}
+            disabled={isLoading}
+            className="bg-[#0f172a] hover:bg-[#101828] text-[#ffffff] px-8 py-3 rounded-lg font-medium disabled:opacity-50"
+          >
+            {isLoading ? "Processing..." : "Buy Now"}
           </Button>
         </div>
       </div>

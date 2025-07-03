@@ -88,7 +88,7 @@ CONVERTKIT_API_KEY=your_convertkit_api_key
 CONVERTKIT_FORM_ID=your_convertkit_form_id
 
 # Site Configuration
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3001
 ```
 
 ## Step 5: Install Dependencies

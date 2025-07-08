@@ -5,24 +5,26 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import NavHeader from "@/components/nav-header"
 import NewsletterFooter from "@/components/newsletter-footer"
+import StillsGallery from "@/components/stills-gallery"
 import { toast } from "sonner"
 import { loadStripe } from '@stripe/stripe-js'
 
 export default function Component() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
 
   const slides = [
     {
-      title: "track (MP3 File)",
+      title: "Started Rough (MP3 File)",
       description: "",
     },
     {
-      title: "The full film (4:3 format, 4k resolution, MP4 file)",
+      title: "The Entire Film (4:3 format, 4k resolution, MP4 file)",
       description: "",
     },
     {
-      title: "All high-resolution image stills",
+      title: "Hand Selected Stills (JPG/PNG files)",
       description: "",
     },
   ]
@@ -77,6 +79,12 @@ export default function Component() {
     }
   }
 
+  const handleStillsClick = () => {
+    if (slides[currentSlide].title === "Hand Selected Stills (JPG/PNG files)") {
+      setIsGalleryOpen(true)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#ffffff] flex flex-col">
       {/* Navigation */}
@@ -108,7 +116,25 @@ export default function Component() {
 
               {/* Center Slide (Main) */}
               <div className="flex flex-col items-center">
-                <div className="w-96 h-80 bg-[#c4c4c4] rounded-lg mb-4"></div>
+                <div 
+                  className={`w-96 h-80 rounded-lg mb-4 ${
+                    slides[currentSlide].title === "Hand Selected Stills (JPG/PNG files)" 
+                      ? "bg-[#c4c4c4] cursor-pointer hover:bg-[#a8a8a8] transition-colors" 
+                      : "bg-[#c4c4c4]"
+                  }`}
+                  onClick={handleStillsClick}
+                >
+                  {slides[currentSlide].title === "Hand Selected Stills (JPG/PNG files)" ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center">
+                      <div className="grid grid-cols-2 grid-rows-2 gap-1 w-96 h-80 min-h-0 min-w-0 h-full w-full">
+                        <div className="min-h-0 min-w-0 h-full w-full"><img src="/stills/still-1.png" alt="Still 1" className="object-cover w-full h-full rounded" /></div>
+                        <div className="min-h-0 min-w-0 h-full w-full"><img src="/stills/still-2.png" alt="Still 2" className="object-cover w-full h-full rounded" /></div>
+                        <div className="min-h-0 min-w-0 h-full w-full"><img src="/stills/still-3.png" alt="Still 3" className="object-cover w-full h-full rounded" /></div>
+                        <div className="min-h-0 min-w-0 h-full w-full"><img src="/stills/still-4.png" alt="Still 4" className="object-cover w-full h-full rounded" /></div>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
                 <p className="text-[#000000] text-sm text-center max-w-96">
                   {slides[currentSlide].title}
                 </p>
@@ -142,6 +168,12 @@ export default function Component() {
 
       {/* Footer */}
       <NewsletterFooter />
+      
+      {/* Gallery Modal */}
+      <StillsGallery 
+        isOpen={isGalleryOpen} 
+        onClose={() => setIsGalleryOpen(false)} 
+      />
     </div>
   )
 }
